@@ -14,14 +14,14 @@ my $requiredNum = $ARGV[1];
 ($second, $minute, $hour, $dayOfMonth, $month, $yearOffset, $dayOfWeek, $dayOfYear, $daylightSavings) = localtime();
 
 sub createMovieWriter(){
-  my $output = new IO::File(">movieGlossary".$dayOfMonth.$month.$hour.$minute.$second.".xml");
+  my $output = new IO::File(">movieGlossary/movieGlossary".$dayOfMonth.$month.$hour.$minute.$second.".xml");
   $movieWriter = new XML::Writer( OUTPUT => $output );
   $movieWriter->xmlDecl( 'UTF-8' );
   $movieWriter->doctype( 'glossary' );
 }
 
 sub createTVSeriesWriter(){
-  my $output = new IO::File(">tvSeriesGlossary".$dayOfMonth.$month.$hour.$minute.$second.".xml");
+  my $output = new IO::File(">tvSeriesGlossary/tvSeriesGlossary".$dayOfMonth.$month.$hour.$minute.$second.".xml");
   $tvSeriesWriter = new XML::Writer( OUTPUT => $output );
   $tvSeriesWriter->xmlDecl( 'UTF-8' );
   $tvSeriesWriter->doctype( 'glossary' );
