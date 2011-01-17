@@ -1,0 +1,13 @@
+#BlueJ class context
+comment0.target=String\ getString()
+comment1.target=int\ getInt()
+comment2.target=byte\ getByte()
+comment3.target=short\ getShort()
+comment4.target=long\ getLong()
+comment5.target=double\ getDouble()
+comment6.target=float\ getFloat()
+comment7.target=char\ getChar()
+comment8.target=void\ pause()
+comment9.params=messageIn
+comment9.target=void\ pause(String)
+numComments=10

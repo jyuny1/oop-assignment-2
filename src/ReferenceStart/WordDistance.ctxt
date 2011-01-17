@@ -1,0 +1,11 @@
+#BlueJ class context
+comment0.params=a\ b\ ed
+comment0.target=WordDistance(String,\ String,\ int)
+comment0.text=\nCreate\ a\ new\ WordDistance\n@param\ a\ \ main\ word\n@param\ b\ \ word\ to\ be\ compared\n@param\ ed\ \ their\ edit\ distance\n\n
+comment1.target=String\ from()
+comment1.text=\nAccessor\ for\ the\ main\ word\n@return\ a\ string\ representing\ the\ word's\ label\n\n
+comment2.target=String\ to()
+comment2.text=\nAccessor\ for\ the\ secondary\ word\n@return\ a\ string\ representing\ the\ word's\ label\n\n
+comment3.target=int\ getDistance()
+comment3.text=\nAccessor\ for\ the\ edit\ distance\n@return\ an\ integer\ representing\ the\ distance\n\n
+numComments=4
