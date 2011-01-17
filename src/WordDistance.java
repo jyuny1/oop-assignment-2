@@ -17,10 +17,10 @@ public class WordDistance
 
  	/**
 	 * Create a new WordDistance
-   * @param a  main word
-   * @param b  word to be compared
-   * @param ed  their edit distance
-   **/
+     * @param a  main word
+     * @param b  word to be compared
+     * @param ed  their edit distance
+     **/
   	public WordDistance(String a, String b, int ed) 
 	  {
         word1 = a;
@@ -31,7 +31,7 @@ public class WordDistance
     /**
      * Accessor for the main word
      * @return a string representing the word's label
-     */
+     **/
     public String from () 
     {
         return word1;

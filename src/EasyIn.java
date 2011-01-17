@@ -10,19 +10,21 @@ public abstract class EasyIn
      while(!ok)
      {
         byte[] b = new byte[512];
-        try {
+        try
+        {
            System.in.read(b);
            s = new String(b);
            s = s.trim();
            ok = true;
         }
-        catch(IOException e) {
+        catch(IOException e)
+        {
             System.out.println(e.getMessage());
         }
      }
-     	return s;
+	   return s;
    }
-  
+
    public static int getInt()
    {
       int i = 0;
@@ -217,6 +219,7 @@ public abstract class EasyIn
      }
      return c;
   }
+
 
   public static void pause()
   {
