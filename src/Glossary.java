@@ -2,6 +2,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.io.*;
 
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import CYL.XMLReader;
+
 /**
  * This class implements a glossary with functionality to support the
  * search for terms. If a term is not in the glossary alternatives
@@ -44,6 +49,37 @@ public class Glossary
 
         return added;
     }
+    /*
+     * This method adds a group of term stored in an XML file to 
+     * the termList field.
+     * @param filePath the path of XML file
+     * @return true if the file or term didn't exist and could be added,
+     * 		   false otherwise
+     */
+    protected boolean addTermFromXML(String filePath){
+    	boolean added = false;
+    	String lable;
+    	String definition;
+    	int lableTag = 0;
+    	int definitionTag = 1;
+    	
+    	XMLReader xmlReader = new XMLReader(filePath);
+    	
+    	if(xmlReader!=null){
+    		NodeList nodeList = xmlReader.read();
+
+    		for(int i=0;i<nodeList.getLength();i++){
+        		Node currentNode = nodeList.item(i);
+        		NodeList currentNodeList = currentNode.getChildNodes();
+        		
+        		lable = currentNodeList.item(lableTag).getTextContent();
+        		definition = currentNodeList.item(definitionTag).getTextContent();       		
+        		added = addTerm(lable, definition);
+           		//System.out.println(i+1+". "+lable+":"+added);        			 
+        	}
+    	}    	
+    	return added;
+    }
 
     /**
      * This method returns true if the parameter exists in the list of
@@ -74,13 +110,17 @@ public class Glossary
         Iterator<Term> i = termsList.iterator();
         while (!found && i.hasNext()) {
             Term nextTerm = i.next();
-            if (label.equals(nextTerm.getLabel()))
+            if (label.equalsIgnoreCase(nextTerm.getLabel()))
                {
                 found = true;
                 definition = nextTerm.getDefinition();
                }
         }
         return definition;
+    }
+    
+    public ArrayList<Term> getTermList() {
+    	return termsList;
     }
 
     /**
@@ -96,7 +136,51 @@ public class Glossary
                lexicon.addWord(word);
             }
         }
+    
+    /*
+     * This method check the input label (String) existed in the ArrayList "termList" or not
+     * @param label the label you are looking for in termList.
+     * @return true if the inputed string name (label) is matched in termList
+     */
+    private boolean labelExists (String label) 
+    {
+        boolean found = false;
+        Iterator<Term> i = termsList.iterator();
+        while (!found && i.hasNext()) {
+        	Term currentTerm = i.next();
+        	
+            if (label.equals(currentTerm.getLabel())){
+            	System.out.println(currentTerm.getDefinition());
+            	found = true;
+            	break;
+            }
+        }
+        return found;
+    }
 
+    /*
+     * This method checks the inputed ArrayList exists in the ArrayLust "termList" or not
+     * @param labels the ArrayList which contains all labels you want to check in termList.
+     * @return a returned ArrayList which contains all terms matched with ArrayList "labels"  
+     */
+    private ArrayList<String> labelsExist(ArrayList<String> labels) {
+    	Iterator<String> label = labels.iterator();
+    	ArrayList<String> returnTerms = new ArrayList<String>();
+    	
+    	
+    	while(label.hasNext()){
+    		String currentLabel = label.next();
+			
+    		for(Term tempExistTerm : termsList) {
+    			if(tempExistTerm.getLabel().contains(currentLabel) && !returnTerms.contains(tempExistTerm.getLabel())) {
+    				returnTerms.add(tempExistTerm.getLabel());
+    			}
+    		}
+    	}
+    	   	
+    	return returnTerms;
+    }
+    
     /**
      * This method retrieves phrases from the lexicon which are similar
      * to the one specified as parameter
@@ -106,26 +190,37 @@ public class Glossary
      */
     private ArrayList<String> getSimilarPhrases (String label) 
     {
-        ArrayList<String> similarPhrases = new ArrayList<String>();
-        similarPhrases.add("");
-        String[] labelWords = label.split(" ");
-
-        for (String word : labelWords)
-        {
-            ArrayList<String> similarWords;
-            if (lexicon.wordExists(word))
-            {
-                similarWords = new ArrayList<String>();
-                similarWords.add(word);
-            }
-            else
-            {
-                similarWords = lexicon.getSimilarWords(word,N_ALTERNATIVES);
-            }
-            similarPhrases = includeWords(similarWords,similarPhrases);
-        }
-
-        return similarPhrases;
+       	ArrayList<String> alternativePhrases = new ArrayList<String>();
+    	ArrayList<String> alternativeWords = new ArrayList<String>();
+    	String[] labelWords = label.split(" ");
+    		
+    	/*
+    	 * To split inputed string into separate words to match extension C
+    	 */
+    	if (labelWords.length < 2) {    		
+    		alternativeWords = lexicon.getSimilarWords(label, 5);
+    		return labelsExist(alternativeWords);
+    	}
+    	else {    		
+        	// form a list of alternative prhases
+        	for(int i=0;i<labelWords.length;i++) {
+        		if (lexicon.wordExists(labelWords[i])) {
+        			alternativeWords.add(labelWords[i]);
+        		}
+        		else {
+        			ArrayList<String> similarWords = lexicon.getSimilarWords(labelWords[i], 5);
+        			
+        			for (String similarWord : similarWords) {
+        				//System.out.println(similarWord);
+        				alternativePhrases.add(similarWord);
+        			}
+        		}        	 	
+        	}
+        	
+    		// form a similar phrasses by calling includeWords
+        	ArrayList<String> includeedWords = includeWords(alternativeWords, alternativePhrases);        	
+        	return labelsExist(includeedWords);
+    	}    	
     }
 
     /**

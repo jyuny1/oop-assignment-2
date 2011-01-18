@@ -1,9 +1,0 @@
-#BlueJ class context
-comment0.params=l\ d
-comment0.target=Term(String,\ String)
-comment0.text=\nCreate\ a\ new\ term\n@param\ l\ \ the\ terms\ label\n@param\ d\ \ the\ terms\ definition\n\n
-comment1.target=String\ getLabel()
-comment1.text=\nAccessor\ for\ the\ label\n@return\ a\ string\ representing\ the\ term's\ label\n\n
-comment2.target=String\ getDefinition()
-comment2.text=\nAccessor\ for\ the\ definition\n@return\ a\ string\ representing\ the\ term's\ definition\n\n
-numComments=3

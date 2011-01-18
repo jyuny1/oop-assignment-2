@@ -14,9 +14,9 @@ import java.util.Iterator;
  */
 
 public class Reference
-{
-    private static final String JAVA_GLOSSARY = "Java Glossary";
-    private static final String CPP_GLOSSARY = "c++ Glossary";
+{   
+    private static final String MOVIE_GLOSSARY = "Movie Glossary";
+    private static final String TV_SERIES_GLOSSARY = "TV Series Glossary";
     
     // There are several glossaries
     private HashMap<String,Glossary> glossaries;
@@ -35,8 +35,8 @@ public class Reference
      */
     private void includeAllGlossaries() 
     {
-        glossaries.put(JAVA_GLOSSARY, new JavaGlossary());
-        glossaries.put(CPP_GLOSSARY, new CppGlossary());
+        glossaries.put(MOVIE_GLOSSARY, new MovieGlossary());
+        glossaries.put(TV_SERIES_GLOSSARY, new TVSeriesGlossary());
     }
 
     /**
@@ -54,6 +54,54 @@ public class Reference
         }
         return found;
     }
+    
+    /*
+     * This method check the input label (String) existed in the ArrayList "termList" or not
+     * @param label the label you are looking for in termList.
+     * @return true if the inputed string name (label) is matched in termList
+     */
+    private boolean termExists (String label) {
+        boolean found = false;
+        
+        Iterator<Term> i = termsList.iterator();
+        while (!found && i.hasNext()) {
+        	Term currentTerm = i.next();
+        	
+            if (label.equals(currentTerm.getLabel())){
+            	System.out.println(currentTerm.getDefinition());
+            	found = true;
+            	break;
+            }
+        }
+        return found;
+    }
+    
+    /*
+     * This method handles the action if the inputed label does not exist.
+     * @param label a string name which you are looking for definition.
+     */
+     private void termNotExists (String label) {
+    	 Iterator<String> keyIterator = glossaries.keySet().iterator();
+    	 
+    	 while(keyIterator.hasNext()){
+             String glossaryKey = keyIterator.next();
+             Glossary glossary = glossaries.get(glossaryKey);
+             
+             ArrayList<String> suggestedTerms = glossary.getSimilarTerms(label);
+             Iterator<String> suggestedTerm = suggestedTerms.iterator();
+             
+             if(suggestedTerm.hasNext()){
+            	 System.out.println("what did you mean?");
+            	 
+            	 for(int i=1;suggestedTerm.hasNext();i++){
+            		 System.out.println(i+". "+suggestedTerm.next());
+            	 }
+             }
+             else{
+            	 System.out.println(label+": cannot be recognised in "+glossaryKey+", please be more specific");
+             }
+    	 }    
+    }
 
     /**
      * This method returns the definition of a term. If the term exists
@@ -62,7 +110,7 @@ public class Reference
      */
     private String getTermDefinition (String label) 
     {
-        String definition = "";
+        String definition = null;
         Iterator<String> keysIterator = glossaries.keySet().iterator();
         while (keysIterator.hasNext()) {
             String glossaryKey = keysIterator.next();
@@ -73,7 +121,27 @@ public class Reference
         }        
         return definition;
     }
-	
+    
+    /*
+     * this method shows all definition stored in the golssaries
+     */
+    private void showTermList(){
+    	Iterator<String> keyIterator = glossaries.keySet().iterator();
+    	int i=0;
+    	
+    	while(keyIterator.hasNext()){
+            String glossaryKey = keyIterator.next();
+            Glossary glossary = glossaries.get(glossaryKey);
+            ArrayList<Term> termList = glossary.getTermList();
+            
+            Iterator<Term> iterator = termList.iterator();
+            while(iterator.hasNext()){
+            	Term currentTerm = iterator.next();
+            	System.out.println(i+1+". "+currentTerm.getLabel()+":"+currentTerm.getDefinition()+"\n");
+            	i++;
+            }
+    	}
+    }
     /**
      * This method interacts with the user. It asks the user for terms
      * to search. This interaction finishes when the user types the special
@@ -81,18 +149,27 @@ public class Reference
      */
      public void interact() 
      {
-		 System.out.print("Enter term: ");
-         String term = EasyIn.getString();
-
-         while (!term.equals("finish")) 
-         {
-             if (termExists(term))
-                 System.out.println("term exists");
-             else
-                 System.out.println("term doesn't exist");
-
-             System.out.print("Enter new term: ");
-             term = EasyIn.getString();
+         while(true){
+    		 System.out.print("Enter term: ");
+             String term = EasyIn.getString().toLowerCase();
+             
+             if(term.equals("finish")){
+            	break; 
+             }
+             else if (term.equals("help")){
+            	 System.out.println("showall: show all terms in glossaries");
+             }
+             else if(term.equals("showall")){
+            	 showTermList();
+             }
+             else if (termExists(term)){
+            	 System.out.println(getTermDefinition(term));
+             }
+             else {
+            	 //term not exist
+            	 termNotExists(term);
+             }
+       
          }
 	}
 }

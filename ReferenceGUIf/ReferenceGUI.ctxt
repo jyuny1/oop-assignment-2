@@ -1,0 +1,21 @@
+#BlueJ class context
+comment0.target=ReferenceGUI()
+comment0.text=\nConstructor\ for\ objects\ of\ class\ ReferenceGUI\n\n
+comment1.target=void\ showAbout()
+comment1.text=\n'About'\ function\:\ show\ the\ 'about'\ box.\n\n
+comment2.target=void\ quit()
+comment2.text=\nQuit\ function\:\ quit\ the\ application.\n\n
+comment3.target=void\ termSearch()
+comment3.text=\nSearch\ for\ a\ specific\ term\n\n\n
+comment4.target=void\ displayList()
+comment4.text=\nDisplay\ a\ list\ of\ terms\ \n\n\n
+comment5.params=termLabel
+comment5.target=void\ displayDefinition(String)
+comment5.text=\nDisplay\ the\ definition\ of\ the\ term\n@param\ termLabel\ the\ term's\ label\n\n\n
+comment6.target=void\ makeMenuBar()
+comment6.text=\nCreate\ the\ main\ frame's\ menu\ bar.\n\n
+comment7.target=JPanel\ getReferencesBar()
+comment7.text=\nCreate\ the\ main\ frame's\ products\ bar.\n@return\ the\ created\ products\ bar\n\n
+comment8.target=void\ interact()
+comment8.text=\nInteracts\ with\ the\ user\n\n
+numComments=9
