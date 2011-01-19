@@ -1,7 +1,7 @@
 
 public class OOP_Assignment_2 {
 	public OOP_Assignment_2(){
-		Reference reference = new Reference();
+		ReferenceGUI reference = new ReferenceGUI();
 		reference.interact();
 	}
 	

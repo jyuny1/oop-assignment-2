@@ -1,5 +1,8 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.util.HashMap;
+import java.util.Iterator;
+
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.border.*;
@@ -12,9 +15,13 @@ import javax.swing.border.*;
  * @author Pablo Romero
  * @version 2009.06.04
  */
-public class ReferenceGUI
-{
-    private static final String VERSION = "Version 1.0";
+public class ReferenceGUI {
+	//setup glossaries
+	private static final String MOVIE_GLOSSARY = "Movie Glossary";
+	private static final String TV_SERIES_GLOSSARY = "TV Series Glossary";
+	private HashMap<String,Glossary> glossaries;
+	
+	private static final String VERSION = "Final version@January 20th 2011";
 
     // GUI fields
     private JFrame mainWindow = new JFrame("Reference");
@@ -25,9 +32,42 @@ public class ReferenceGUI
     /**
      * Constructor for objects of class ReferenceGUI
      */
-    public ReferenceGUI() 
-    {
+    public ReferenceGUI() {
+        glossaries = new HashMap<String,Glossary>();
+        includeAllGlossaries();
     }
+    
+    /**
+     * Includes all the glossaries in the reference
+     */
+    private void includeAllGlossaries() 
+    {
+        glossaries.put(MOVIE_GLOSSARY, new MovieGlossary());
+        glossaries.put(TV_SERIES_GLOSSARY, new TVSeriesGlossary());
+    }
+
+    /**
+     * This method returns the definition of a term. If the term exists
+     * in several glossaries all the definitions are returned
+     * @param label  word to look for in the termsList field
+     */
+    private String getTermDefinition (String label) 
+    {
+        String definition = null;
+        Iterator<String> keysIterator = glossaries.keySet().iterator();
+        while (keysIterator.hasNext()) {
+            String glossaryKey = keysIterator.next();
+            Glossary glossary = glossaries.get(glossaryKey);
+            if (glossary.termExists(label)) {
+                definition += glossaryKey+"\n"+glossary.getTermDefinition(label)+"\n";
+            }
+        }        
+        return definition;
+    }
+    
+    /*
+     * GUI Section
+     */
 
     /**
      * 'About' function: show the 'about' box.
@@ -35,7 +75,7 @@ public class ReferenceGUI
     private void showAbout()
     {
         JOptionPane.showMessageDialog(mainWindow, 
-                    "Virtual reference\n" + VERSION,
+                    "Virtual reference by Liu, Chun-Yi\n" + VERSION,
                     "About Virtual Reference", 
                     JOptionPane.INFORMATION_MESSAGE);
     }
@@ -60,6 +100,7 @@ public class ReferenceGUI
         
         // For now it only displays a list of options
         displayList();
+        
     }
     
     /**
@@ -128,8 +169,8 @@ public class ReferenceGUI
         menubar.add(menu);
         
         item = new JMenuItem("Quit");
-            item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, SHORTCUT_MASK));
-            item.addActionListener(new ActionListener() {
+        item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, SHORTCUT_MASK));
+        item.addActionListener(new ActionListener() {
                                public void actionPerformed(ActionEvent e) { quit(); }
                            });
         menu.add(item);
@@ -161,10 +202,10 @@ public class ReferenceGUI
         JButton button = new JButton("All");
         referencesBar.add(button);
         
-        button = new JButton("Java Glossary");
+        button = new JButton("Movie Glossary");
         referencesBar.add(button);
         
-        button = new JButton("c++ Glossary");
+        button = new JButton("TV Series Glossary");
         referencesBar.add(button);
         
        // put a spacer into the menubar, so the next menu appears to the right

@@ -137,26 +137,7 @@ public class Glossary
             }
         }
     
-    /*
-     * This method check the input label (String) existed in the ArrayList "termList" or not
-     * @param label the label you are looking for in termList.
-     * @return true if the inputed string name (label) is matched in termList
-     */
-    private boolean labelExists (String label) 
-    {
-        boolean found = false;
-        Iterator<Term> i = termsList.iterator();
-        while (!found && i.hasNext()) {
-        	Term currentTerm = i.next();
-        	
-            if (label.equals(currentTerm.getLabel())){
-            	System.out.println(currentTerm.getDefinition());
-            	found = true;
-            	break;
-            }
-        }
-        return found;
-    }
+    
 
     /*
      * This method checks the inputed ArrayList exists in the ArrayLust "termList" or not
