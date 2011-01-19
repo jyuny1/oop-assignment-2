@@ -1,8 +1,8 @@
 
 public class OOP_Assignment_2 {
 	public OOP_Assignment_2(){
-		//ReferenceGUI reference = new ReferenceGUI();
-		ReferenceTXT reference = new ReferenceTXT();
+		ReferenceGUI reference = new ReferenceGUI();
+		//ReferenceTXT reference = new ReferenceTXT();
 		reference.interact();
 	}
 	
