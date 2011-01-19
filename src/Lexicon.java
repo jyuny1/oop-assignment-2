@@ -1,4 +1,3 @@
-import java.io.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -14,14 +13,18 @@ import java.util.Iterator;
  */
 public class Lexicon
 {
-
+	private static Lexicon currentLexicon = new Lexicon();
+	
+	public static Lexicon getInstance(){
+		return currentLexicon;
+	}
+	
 	private ArrayList<String> wordList;
 
  	/**
 	 * Create a new lexicon
     **/
-  	public Lexicon() 
-	  {
+  	private Lexicon() {
         wordList = new ArrayList<String>();
     }
 
@@ -33,7 +36,13 @@ public class Lexicon
      */
     public boolean wordExists (String word) 
     {
-        return wordList.contains(word);
+        boolean found = false;
+        Iterator<String> i = wordList.iterator();
+        while (!found && i.hasNext()) {
+            if (word.equals(i.next()))
+                found = true;
+        }
+        return found;
     }
 
     /**
@@ -77,14 +86,11 @@ public class Lexicon
      * @param wordDistances  ArrayList of WordDistance to be inspected
      * @return the minimum distance in the parameter
      */
-    private WordDistance getMinDistance (ArrayList<WordDistance> wordDistances)
-    {
+    private WordDistance getMinDistance (ArrayList<WordDistance> wordDistances) {
          WordDistance minWordDistance = wordDistances.iterator().next();
 
-         for (WordDistance wordDistance : wordDistances)
-		 {
-             if (minWordDistance.getDistance() > wordDistance.getDistance())
-             {
+         for (WordDistance wordDistance : wordDistances) {
+             if (minWordDistance.getDistance() > wordDistance.getDistance()) {
                  minWordDistance = wordDistance;
              }
          }
@@ -100,8 +106,7 @@ public class Lexicon
      * @param n  the number of alternatives to be retrieved
      * @return an ArrayList containing the alternative words
      */
-    public ArrayList<String> getSimilarWords (String word, int n) 
-    {
+    public ArrayList<String> getSimilarWords (String word, int n) {
         ArrayList<String> similarWords = new ArrayList<String>();
         ArrayList<WordDistance> editDistances = getEditDistances(word);
 
@@ -110,8 +115,7 @@ public class Lexicon
         if (n>wordList.size())
             n= wordList.size();
 
-        for (int i=0;i<n;i++)
-        {
+        for (int i=0;i<n;i++) {
             WordDistance minWordDistance = getMinDistance(editDistances);
             similarWords.add(minWordDistance.to());
             editDistances.remove(minWordDistance);
@@ -119,7 +123,7 @@ public class Lexicon
 
         return similarWords;
     }
-
+    
     /**
      * This method adds a new word to the wordList field
      * @param word  the new term to be added
@@ -245,5 +249,10 @@ public class Lexicon
 
     }
 
-}
+	
+    public ArrayList<String> getWordList() {
+		// TODO Auto-generated method stub
+		return wordList;
+	}
 
+}

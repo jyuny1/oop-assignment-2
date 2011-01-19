@@ -26,7 +26,7 @@ public class Glossary
   	public Glossary()
 	  {
         termsList = new ArrayList<Term>();
-        lexicon = Lexicon.getInstance();
+        lexicon = new Lexicon();
     }
 
     /**
@@ -120,10 +120,6 @@ public class Glossary
     public ArrayList<Term> getTermList() {
     	return termsList;
     }
-    
-    public ArrayList<String> getWordList(){
-    	return Lexicon.getInstance().getWordList();
-    }
 
     /**
      * This method adds the words from a term to the lexicon field
@@ -171,7 +167,7 @@ public class Glossary
      *              search for alternative phrases
      * @return an ArrayList containing the alternative phrases
      */
-    ArrayList<String> getSimilarPhrases (String label) 
+    private ArrayList<String> getSimilarPhrases (String label) 
     {
        	ArrayList<String> alternativePhrases = new ArrayList<String>();
     	ArrayList<String> alternativeWords = new ArrayList<String>();
@@ -218,48 +214,19 @@ public class Glossary
      */
     private ArrayList<String> includeWords (ArrayList<String> words, ArrayList<String> phrases) 
     {
-        if (phrases.isEmpty()) {
-        	return words;
+        ArrayList<String> modifiedPhrases = new ArrayList<String>();
+
+        for (String phrase : phrases)
+        {
+            for (String word: words) 
+            {
+                modifiedPhrases.add(phrase+word+" ");
+            }
         }
-        else if (words.isEmpty()) {
-			return phrases;
-		}
-        else if (phrases.isEmpty() && words.isEmpty()) {
-			return null;
-		}
-        else {      	
-        	ArrayList<String> modifiedPhrases = new ArrayList<String>();
-        	String tmpString = new String();
-        	
-            for (String phrase : phrases){
-                for (String word: words) {
-                	for (Term tempTerm : termsList) {
-                		// in order to provide a good suggestion to user, four combinations are given below.
-                		if (tempTerm.getLabel().equals(phrase+" "+word)) {                			
-                			tmpString = phrase+ " " + word;
-                			modifiedPhrases.add(tmpString);
-                			//break;			
-                		}
-                		else if (tempTerm.getLabel().equals(word+" "+phrase)) {
-                			tmpString = word+" "+phrase;
-                			modifiedPhrases.add(tmpString);
-                			//break;
-                		}
-                		else if (tempTerm.getLabel().equals(phrase+word)) {
-							tmpString = phrase+word;
-							modifiedPhrases.add(tmpString);	
-                		}
-                		else if (tempTerm.getLabel().equals(word+phrase)) {
-							tmpString = word+phrase;
-							modifiedPhrases.add(tmpString);	
-						}
-                	}
-                }
-            }			
-            
-            return modifiedPhrases;
-        }
+        
+        return modifiedPhrases;
     }
+
 
     /**
      * This method retrieves terms from termList which are similar

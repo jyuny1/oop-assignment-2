@@ -1,11 +1,12 @@
 import java.awt.*;
 import java.awt.event.*;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.border.*;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.StyledDocument;
 
 /**
  * This class implements a reference book or a group of
@@ -15,13 +16,8 @@ import javax.swing.border.*;
  * @author Pablo Romero
  * @version 2009.06.04
  */
-public class ReferenceGUI {
-	//setup glossaries
-	private static final String MOVIE_GLOSSARY = "Movie Glossary";
-	private static final String TV_SERIES_GLOSSARY = "TV Series Glossary";
-	private HashMap<String,Glossary> glossaries;
-	
-	private static final String VERSION = "Final version@January 20th 2011";
+public class ReferenceGUI extends Reference {
+    private static final String VERSION = "Version 1.0";
 
     // GUI fields
     private JFrame mainWindow = new JFrame("Reference");
@@ -29,45 +25,14 @@ public class ReferenceGUI {
     private JPanel resultsPane;
     private JTextField searchField;
     
+    //private int glossarySelected;
+    
     /**
      * Constructor for objects of class ReferenceGUI
      */
-    public ReferenceGUI() {
-        glossaries = new HashMap<String,Glossary>();
-        includeAllGlossaries();
+    public ReferenceGUI(){
+    	super();
     }
-    
-    /**
-     * Includes all the glossaries in the reference
-     */
-    private void includeAllGlossaries() 
-    {
-        glossaries.put(MOVIE_GLOSSARY, new MovieGlossary());
-        glossaries.put(TV_SERIES_GLOSSARY, new TVSeriesGlossary());
-    }
-
-    /**
-     * This method returns the definition of a term. If the term exists
-     * in several glossaries all the definitions are returned
-     * @param label  word to look for in the termsList field
-     */
-    private String getTermDefinition (String label) 
-    {
-        String definition = null;
-        Iterator<String> keysIterator = glossaries.keySet().iterator();
-        while (keysIterator.hasNext()) {
-            String glossaryKey = keysIterator.next();
-            Glossary glossary = glossaries.get(glossaryKey);
-            if (glossary.termExists(label)) {
-                definition += glossaryKey+"\n"+glossary.getTermDefinition(label)+"\n";
-            }
-        }        
-        return definition;
-    }
-    
-    /*
-     * GUI Section
-     */
 
     /**
      * 'About' function: show the 'about' box.
@@ -75,7 +40,7 @@ public class ReferenceGUI {
     private void showAbout()
     {
         JOptionPane.showMessageDialog(mainWindow, 
-                    "Virtual reference by Liu, Chun-Yi\n" + VERSION,
+                    "Virtual reference\n" + VERSION,
                     "About Virtual Reference", 
                     JOptionPane.INFORMATION_MESSAGE);
     }
@@ -90,33 +55,38 @@ public class ReferenceGUI {
     
     /**
      * Search for a specific term
+     * @throws BadLocationException 
      * 
      */
-    private void termSearch()
-    {
+    private void termSearch(){
         // First remove all previous content
         definitionPane.removeAll();
         resultsPane.removeAll();
         
-        // For now it only displays a list of options
-        displayList();
-        
+        String lable = searchField.getText();
+        if(lable.equalsIgnoreCase("all")){
+        	displayTermList(showTermList());
+        }
+        else{
+            if(termExists(lable)){
+            	displayDefinition(lable);
+            }
+            else{
+            	displayList(getSimilarTerms(lable, glossarySelected));
+            }        	
+        }
     }
-    
+ 
     /**
      * Display a list of terms 
      * 
      */
-    private void displayList()
-    {
-        // This should be an array list of similar terms from the glossary
-        String similarTerms[] = {"class","classpath","subclass","api"};
-        
+    private void displayList(ArrayList<String> arrayList){
         // Grouping the results in a button group means the user can 
         // only select one at a time (which is what we want)
         ButtonGroup termsGroup = new ButtonGroup();
         
-        for (String similarTerm : similarTerms) {
+        for (String similarTerm : arrayList) {
             JRadioButton termButton = new JRadioButton(similarTerm);
             // We need to include the terms' label as the action command
             // otherwise it cannot be passed to the inner class (only Final 
@@ -128,12 +98,34 @@ public class ReferenceGUI {
                            });
             resultsPane.add(termButton);
         }
+ 
+
         mainWindow.setVisible(true);
+    }
+    
+    private void displayTermList(String terms){
+    	definitionPane.removeAll();
+    	
+       	JTextPane textPane = new JTextPane();
+    	StyledDocument doc = (StyledDocument) textPane.getDocument();
+    	AttributeSet style = doc.addStyle("StyleName", null);
+    	
+       	try {
+			doc.insertString(doc.getLength(), "\n"+terms, style);
+		} catch (BadLocationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	    	    
+        JScrollPane scrollPane = new JScrollPane(textPane); 
+        definitionPane.add(scrollPane);
+        mainWindow.setVisible(true);    
     }
     
     /**
      * Display the definition of the term
      * @param termLabel the term's label
+     * @throws BadLocationException 
      * 
      */
     private void displayDefinition(String termLabel)
@@ -141,13 +133,26 @@ public class ReferenceGUI {
         // Remove the previous definition
         definitionPane.removeAll();
 
-        JTextArea textArea = new JTextArea(5, 50);
-        textArea.setLineWrap(true);
-        textArea.setEditable(false);
-        textArea.append("This is the definition for " + termLabel);
-        JScrollPane scrollPane = new JScrollPane(textArea); 
+        String definition = getTermDefinitions(termLabel, glossarySelected);
+        
+    	JTextPane textPane = new JTextPane();
+    	StyledDocument doc = (StyledDocument) textPane.getDocument();
+
+    	AttributeSet style = doc.addStyle("StyleName", null);
+
+    	textPane.setCaretPosition(doc.getLength());
+    	textPane.insertIcon(new ImageIcon("movieCovers/"+termLabel+".jpg"));
+    	    
+    	try {
+			doc.insertString(doc.getLength(), "\n"+definition, style);
+		} catch (BadLocationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	    	    
+        JScrollPane scrollPane = new JScrollPane(textPane); 
         definitionPane.add(scrollPane);
-        mainWindow.setVisible(true);
+        mainWindow.setVisible(true);    	    
     }
     
     /**
@@ -169,8 +174,8 @@ public class ReferenceGUI {
         menubar.add(menu);
         
         item = new JMenuItem("Quit");
-        item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, SHORTCUT_MASK));
-        item.addActionListener(new ActionListener() {
+            item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, SHORTCUT_MASK));
+            item.addActionListener(new ActionListener() {
                                public void actionPerformed(ActionEvent e) { quit(); }
                            });
         menu.add(item);
@@ -189,6 +194,17 @@ public class ReferenceGUI {
         menu.add(item);
     }
 
+    private void setInputGlossary(String input){
+    	if(input.equals(MOVIE_GLOSSARY)){
+    		glossarySelected = 1;
+    	}
+    	else if(input.equals(TV_SERIES_GLOSSARY)){
+    		glossarySelected = 2;
+    	}
+    	else{
+    		glossarySelected = 0;
+    	}
+    }
     /**
      * Create the main frame's products bar.
      * @return the created products bar
@@ -201,12 +217,34 @@ public class ReferenceGUI {
   
         JButton button = new JButton("All");
         referencesBar.add(button);
+        button.addActionListener(new ActionListener() {			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				setInputGlossary(((JButton) e.getSource()).getText());
+			}
+		});
         
         button = new JButton("Movie Glossary");
         referencesBar.add(button);
+        button.addActionListener(new ActionListener() {			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				setInputGlossary(((JButton) e.getSource()).getText());
+			}
+		});
         
         button = new JButton("TV Series Glossary");
         referencesBar.add(button);
+        
+        button.addActionListener(new ActionListener() {			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				setInputGlossary(((JButton) e.getSource()).getText());
+			}
+		});
         
        // put a spacer into the menubar, so the next menu appears to the right
         referencesBar.add(Box.createHorizontalStrut(60));
@@ -250,13 +288,20 @@ public class ReferenceGUI {
        definitionPane = new JPanel();
        definitionPane.setLayout(new BoxLayout(definitionPane,BoxLayout.Y_AXIS));
        contentPane.add(definitionPane, BorderLayout.CENTER);
-
+       
         // building is done - arrange the components      
         mainWindow.pack();
         
         // place this frame at the center of the screen and show
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+        mainWindow.setSize(1024, 768);
         mainWindow.setLocation(d.width/2 - mainWindow.getWidth()/2, d.height/2 - mainWindow.getHeight()/2);
         mainWindow.setVisible(true);
     }
+
+	@Override
+	protected void setInputGlossary() {
+		// TODO Auto-generated method stub
+		
+	}
 }
