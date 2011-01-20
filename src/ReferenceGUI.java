@@ -294,7 +294,7 @@ public class ReferenceGUI extends Reference {
         
         // place this frame at the center of the screen and show
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
-        mainWindow.setSize(1024, 768);
+        mainWindow.setSize(800, 600);
         mainWindow.setLocation(d.width/2 - mainWindow.getWidth()/2, d.height/2 - mainWindow.getHeight()/2);
         mainWindow.setVisible(true);
     }

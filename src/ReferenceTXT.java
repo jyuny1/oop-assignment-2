@@ -46,6 +46,10 @@ public class ReferenceTXT extends Reference{
 					if(lable.equalsIgnoreCase("all")){
 						System.out.println(showTermList());
 					}
+					else if(lable.equalsIgnoreCase("help")){
+						System.out.println("goback: enter goback when you are in search mode");
+						System.out.println("help: see this help menu");
+					}
 					else{
 						if(termExists(lable)){
 							System.out.println(getTermDefinitions(lable, glossarySelected));

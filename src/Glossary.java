@@ -3,7 +3,6 @@ import java.util.Iterator;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import CYL.XMLReader;
 
 /**
  * This class implements a glossary with functionality to support the

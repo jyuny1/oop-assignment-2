@@ -1,6 +1,6 @@
 #BlueJ package file
-package.editor.height=161
-package.editor.width=199
+package.editor.height=493
+package.editor.width=571
 package.editor.x=54
 package.editor.y=42
 package.numDependencies=0
@@ -20,5 +20,5 @@ target1.name=ReferenceGUI
 target1.showInterface=false
 target1.type=ClassTarget
 target1.width=110
-target1.x=60
-target1.y=10
+target1.x=290
+target1.y=90
